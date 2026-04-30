@@ -323,6 +323,9 @@ func (h *LoggingHandler) getLogs(ctx *fasthttp.RequestCtx) {
 			filters.MissingCostOnly = val
 		}
 	}
+	if cacheHitTypes := string(ctx.QueryArgs().Peek("cache_hit_types")); cacheHitTypes != "" {
+		filters.CacheHitTypes = parseCommaSeparated(cacheHitTypes)
+	}
 	if contentSearch := string(ctx.QueryArgs().Peek("content_search")); contentSearch != "" {
 		filters.ContentSearch = contentSearch
 	}
@@ -561,6 +564,9 @@ func (h *LoggingHandler) getLogsStats(ctx *fasthttp.RequestCtx) {
 			filters.MissingCostOnly = val
 		}
 	}
+	if cacheHitTypes := string(ctx.QueryArgs().Peek("cache_hit_types")); cacheHitTypes != "" {
+		filters.CacheHitTypes = parseCommaSeparated(cacheHitTypes)
+	}
 	if contentSearch := string(ctx.QueryArgs().Peek("content_search")); contentSearch != "" {
 		filters.ContentSearch = contentSearch
 	}
@@ -716,6 +722,9 @@ func parseHistogramFilters(ctx *fasthttp.RequestCtx) *logstore.SearchFilters {
 		if val, err := strconv.ParseBool(missingCost); err == nil {
 			filters.MissingCostOnly = val
 		}
+	}
+	if cacheHitTypes := string(ctx.QueryArgs().Peek("cache_hit_types")); cacheHitTypes != "" {
+		filters.CacheHitTypes = parseCommaSeparated(cacheHitTypes)
 	}
 	if contentSearch := string(ctx.QueryArgs().Peek("content_search")); contentSearch != "" {
 		filters.ContentSearch = contentSearch
