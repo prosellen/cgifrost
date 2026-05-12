@@ -14,6 +14,7 @@ import {
   type ReactNode,
   useCallback,
   useMemo,
+  useRef,
   useState,
 } from "react";
 import {
@@ -226,6 +227,9 @@ export function LogsVolumeChart({
   const [refAreaLeft, setRefAreaLeft] = useState<number | null>(null);
   const [refAreaRight, setRefAreaRight] = useState<number | null>(null);
   const [isSelecting, setIsSelecting] = useState(false);
+  // Suppress the Bar onClick that fires immediately after a drag-select mouseUp,
+  // otherwise Recharts overwrites the dragged range with a single-bucket zoom.
+  const suppressNextBarClickRef = useRef(false);
 
   const effectingTimeRange = useMemo(() => {
     if (period) {
@@ -393,6 +397,11 @@ export function LogsVolumeChart({
 
       // Only trigger if selection spans at least one bucket
       if (selectionEnd - selectionStart >= data.bucket_size_seconds) {
+        // Mark this gesture as a real drag so the trailing Bar onClick doesn't
+        // overwrite the dragged range with a single-bucket zoom.
+        if (refAreaLeft !== refAreaRight) {
+          suppressNextBarClickRef.current = true;
+        }
         onTimeRangeChange(selectionStart, selectionEnd);
       }
     }
@@ -405,6 +414,10 @@ export function LogsVolumeChart({
   // Handle click on a bar (zoom into that bucket)
   const handleBarClick = useCallback(
     (barData: LogVolumeDataPoint | undefined) => {
+      if (suppressNextBarClickRef.current) {
+        suppressNextBarClickRef.current = false;
+        return;
+      }
       if (!data || !barData?.timestamp) return;
 
       const startTime = new Date(barData.timestamp).getTime() / 1000;
