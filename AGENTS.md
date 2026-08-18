@@ -1,5 +1,19 @@
 # AGENTS.md — Bifrost AI Gateway
 
+## Agent skills
+
+### Issue tracker
+
+Issues and specs live in the GitHub repository `prosellen/cgifrost`; use the `gh` CLI. See `docs/agents/issue-tracker.md`.
+
+### Triage labels
+
+Use the canonical labels `needs-triage`, `needs-info`, `ready-for-agent`, `ready-for-human`, and `wontfix`. See `docs/agents/triage-labels.md`.
+
+### Domain docs
+
+This is a single-context repo using root `CONTEXT.md` and `docs/adr/`. See `docs/agents/domain.md`.
+
 > Context for AI agents (Claude Code, Copilot, Cursor, etc.) working on this codebase. Read this fully before making changes.
 
 ## What is Bifrost?
